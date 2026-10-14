@@ -4,6 +4,9 @@ RUN apk add --no-cache fail2ban bash iptables iproute2 python3
 
 WORKDIR /app
 
+# Security: Run in production mode to suppress debug info and stack traces
+ENV NODE_ENV=production
+
 COPY package*.json ./
 RUN npm install --production
 
