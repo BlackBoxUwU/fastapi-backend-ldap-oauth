@@ -13,8 +13,8 @@
 |:---|:---:|:---|
 | **Critical** | 0 | None |
 | **High** | 0 | None |
-| **Medium** | 1 | 1 RESOLVED (`node-express-dev-env`) |
-| **Low / Info** | 9 | 0 RESOLVED — 9 pending |
+| **Medium** | 1 | ✅ RESOLVED (`node-express-dev-env`) |
+| **Low / Info** | 9 | 1 RESOLVED — 8 pending |
 
 ---
 
@@ -24,8 +24,6 @@
 - **`node-express-dev-env`**
   - *Severity:* **Medium**
   - *Status:* ✅ **RESOLVED (Commit 1)**
-  - *Affected URL:* `http://backend:3000`
-  - *Description:* Express.js was running in default development mode, exposing stack traces and debug info.
   - *Resolution Applied:* Added `ENV NODE_ENV=production` in `Dockerfile`.
 
 ---
@@ -33,8 +31,8 @@
 ### 2. Technology Fingerprinting
 - **`tech-detect:express`** (`X-Powered-By: Express` header)
   - *Severity:* Info
-  - *Status:* ⏳ **PENDING**
-  - *Finding:* Express.js framework fingerprint detectable via response headers.
+  - *Status:* ✅ **RESOLVED (Commit 2)**
+  - *Resolution Applied:* Added `app.disable('x-powered-by')` in `server.js` to remove the Express identification header from all responses.
 
 ---
 

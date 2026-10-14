@@ -7,6 +7,9 @@ const db = require("./db");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Security hardening: Disable Express fingerprinting header
+app.disable("x-powered-by");
+
 // Path to shared rotated secret file (if mounted)
 const SHARED_SECRET_FILE = "/shared-secrets/api_secret.txt";
 
