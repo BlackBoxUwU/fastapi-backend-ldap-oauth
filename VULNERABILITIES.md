@@ -14,7 +14,7 @@
 | **Critical** | 0 | None |
 | **High** | 0 | None |
 | **Medium** | 1 | ✅ RESOLVED (`node-express-dev-env`) |
-| **Low / Info** | 9 | 3 RESOLVED — 7 pending |
+| **Low / Info** | 9 | 6 RESOLVED — 4 pending |
 
 ---
 
@@ -37,13 +37,13 @@
 ---
 
 ### 3. Missing HTTP Security Headers
-- **Status:** ⏳ **IN PROGRESS** — 2 of 9 headers added
+- **Status:** ⏳ **IN PROGRESS** — 5 of 9 headers added
 - *Affected headers:*
   - `X-Frame-Options: DENY` — ✅ **RESOLVED (Commit 3)** — Mitigates clickjacking
   - `X-Content-Type-Options: nosniff` — ✅ **RESOLVED (Commit 3)** — Mitigates MIME-sniffing
-  - `Strict-Transport-Security` — ⏳ Pending
-  - `Referrer-Policy` — ⏳ Pending
-  - `Permissions-Policy` — ⏳ Pending
+  - `Strict-Transport-Security` — ✅ **RESOLVED (Commit 4)** — Enforces HTTPS
+  - `Referrer-Policy: no-referrer` — ✅ **RESOLVED (Commit 4)** — Prevents referrer leakage
+  - `Permissions-Policy` — ✅ **RESOLVED (Commit 4)** — Restricts browser hardware APIs
   - `X-Permitted-Cross-Domain-Policies` — ⏳ Pending
   - `Cross-Origin-Embedder-Policy` — ⏳ Pending
   - `Cross-Origin-Opener-Policy` — ⏳ Pending
