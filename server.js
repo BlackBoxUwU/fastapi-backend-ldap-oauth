@@ -10,6 +10,13 @@ const PORT = process.env.PORT || 3000;
 // Security hardening: Disable Express fingerprinting header
 app.disable("x-powered-by");
 
+// Security hardening: Anti-clickjacking and MIME-sniffing headers
+app.use((req, res, next) => {
+  res.setHeader("X-Frame-Options", "DENY");
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  next();
+});
+
 // Path to shared rotated secret file (if mounted)
 const SHARED_SECRET_FILE = "/shared-secrets/api_secret.txt";
 

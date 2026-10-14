@@ -14,7 +14,7 @@
 | **Critical** | 0 | None |
 | **High** | 0 | None |
 | **Medium** | 1 | ✅ RESOLVED (`node-express-dev-env`) |
-| **Low / Info** | 9 | 1 RESOLVED — 8 pending |
+| **Low / Info** | 9 | 3 RESOLVED — 7 pending |
 
 ---
 
@@ -32,15 +32,15 @@
 - **`tech-detect:express`** (`X-Powered-By: Express` header)
   - *Severity:* Info
   - *Status:* ✅ **RESOLVED (Commit 2)**
-  - *Resolution Applied:* Added `app.disable('x-powered-by')` in `server.js` to remove the Express identification header from all responses.
+  - *Resolution Applied:* Added `app.disable('x-powered-by')` in `server.js`.
 
 ---
 
 ### 3. Missing HTTP Security Headers
-- **Status:** ⏳ **PENDING** — 0 of 9 headers added
+- **Status:** ⏳ **IN PROGRESS** — 2 of 9 headers added
 - *Affected headers:*
-  - `X-Frame-Options` — ⏳ Pending
-  - `X-Content-Type-Options` — ⏳ Pending
+  - `X-Frame-Options: DENY` — ✅ **RESOLVED (Commit 3)** — Mitigates clickjacking
+  - `X-Content-Type-Options: nosniff` — ✅ **RESOLVED (Commit 3)** — Mitigates MIME-sniffing
   - `Strict-Transport-Security` — ⏳ Pending
   - `Referrer-Policy` — ⏳ Pending
   - `Permissions-Policy` — ⏳ Pending
