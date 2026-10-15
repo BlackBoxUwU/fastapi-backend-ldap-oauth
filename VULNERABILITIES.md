@@ -13,7 +13,7 @@
 |:---|:---:|:---|
 | **Critical** | 0 | None |
 | **High** | 0 | None |
-| **Medium** | 1 | ✅ RESOLVED (Commit 1) |
+| **Medium** | 1 | Mitigated in Dockerfile (Block 1); rescan pending |
 | **Low / Info** | 9 | Identified (Security headers & fingerprinting) |
 
 ---
@@ -23,12 +23,11 @@
 ### 1. Medium Severity Vulnerability: Development Environment Exposure
 - **`node-express-dev-env`**
   - *Severity:* **Medium**
-  - *Status:* ✅ **RESOLVED (Commit 1)**
-  - *Resolution Applied:* Added `ENV NODE_ENV=production` in `Dockerfile`.
+  - *Status:* ✅ `NODE_ENV=production` set in the Dockerfile (Block 1; rescan pending).
   - *Affected URL:* `http://backend:3000`
-  - *Description:* The Express.js application is running in default development mode (`NODE_ENV` is not explicitly set to `production`).
+  - *Description:* The original scan detected the Express.js application running without `NODE_ENV` explicitly set to `production`.
   - *Risk:* Development mode may leak detailed stack traces, internal paths, and framework debug information during application errors, aiding attackers in vulnerability exploitation.
-  - *Remediation:* Set `NODE_ENV=production` in the Dockerfile and container environment.
+  - *Remediation:* Set `NODE_ENV=production` in the Dockerfile and container environment. The Dockerfile now sets this environment variable.
 
 ---
 
@@ -62,5 +61,5 @@ The Express API responses lack essential security headers:
 ---
 
 ## 🛠️ Next Steps: Granular Remediation Plan (Phase 2)
-1. **Commit 1:** Enforce `NODE_ENV=production` in Dockerfile and container configuration.
-2. **Commit 2:** Install and configure `helmet` middleware in `server.js` to automatically inject all standard security headers and disable `x-powered-by`.
+1. ✅ **Block 1 complete:** Set `NODE_ENV=production` in the Dockerfile; rescan pending.
+2. **Next block:** Configure `helmet` middleware in `server.js` to inject standard security headers and disable `x-powered-by`.
