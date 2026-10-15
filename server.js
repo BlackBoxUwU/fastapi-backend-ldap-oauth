@@ -7,24 +7,7 @@ const db = require("./db");
 const app = express();
 const PORT = process.env.PORT || 3000;
 
-// Security hardening: Disable Express fingerprinting header
 app.disable("x-powered-by");
-
-// Security hardening: Anti-clickjacking and MIME-sniffing headers
-app.use((req, res, next) => {
-  res.setHeader("X-Frame-Options", "DENY");
-  res.setHeader("X-Content-Type-Options", "nosniff");
-  // Transport security and content policy headers
-  res.setHeader("Strict-Transport-Security", "max-age=31536000; includeSubDomains");
-  res.setHeader("Referrer-Policy", "no-referrer");
-  res.setHeader("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
-  // Cross-origin isolation headers
-  res.setHeader("X-Permitted-Cross-Domain-Policies", "none");
-  res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
-  res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
-  res.setHeader("Cross-Origin-Resource-Policy", "same-origin");
-  next();
-});
 
 // Path to shared rotated secret file (if mounted)
 const SHARED_SECRET_FILE = "/shared-secrets/api_secret.txt";
@@ -52,7 +35,26 @@ try {
   if (!fs.existsSync(logDir)) fs.mkdirSync(logDir, { recursive: true });
 } catch (err) {}
 
-app.use(cors());
+const frontendOrigin = process.env.FRONTEND_ORIGIN || "http://localhost:8080";
+app.use(cors({
+  origin: (origin, callback) => {
+    callback(null, !origin || origin === frontendOrigin);
+  },
+  methods: ["GET", "POST"],
+  allowedHeaders: ["Content-Type", "x-api-key"]
+}));
+app.use((req, res, next) => {
+  res.setHeader("Content-Security-Policy", "default-src 'none'; frame-ancestors 'none'; base-uri 'none'");
+  res.setHeader("X-Frame-Options", "DENY");
+  res.setHeader("X-Content-Type-Options", "nosniff");
+  res.setHeader("Referrer-Policy", "no-referrer");
+  res.setHeader("Permissions-Policy", "camera=(), microphone=(), geolocation=()");
+  res.setHeader("Cross-Origin-Resource-Policy", "same-origin");
+  res.setHeader("Cross-Origin-Embedder-Policy", "require-corp");
+  res.setHeader("Cross-Origin-Opener-Policy", "same-origin");
+  res.setHeader("X-Permitted-Cross-Domain-Policies", "none");
+  next();
+});
 app.use(express.json());
 
 // Access logging middleware for Fail2Ban monitoring
