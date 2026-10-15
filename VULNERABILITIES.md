@@ -2,64 +2,61 @@
 
 - **Target Component:** Backend Security & Secret Rotation REST API (`http://backend:3000`)
 - **Scan Tool:** ProjectDiscovery Nuclei v3.11.1 (Templates v10.5.0)
-- **Scan Date:** 2026-10-14
-- **Assessment Scope:** Dynamic Application Security Testing (DAST) across 11,102 signed templates.
+- **Scan Date:** 2026-10-15
+- **Assessment Scope:** Dynamic Application Security Testing (DAST); 11,102 templates loaded.
 
 ---
 
-## 📊 Summary of Identified Findings
+## Summary of Identified Findings
+
+Nuclei reported 9 findings, all with **Info** severity. These are informational detections and hardening gaps, not evidence of 9 exploitable vulnerabilities.
 
 | Severity | Count | Status |
 |:---|:---:|:---|
-| **Critical** | 0 | None |
-| **High** | 0 | None |
-| **Medium** | 1 | Mitigated in Dockerfile (Block 1); rescan pending |
-| **Low / Info** | 9 | Identified (Security headers & fingerprinting) |
+| **Critical** | 0 | None detected |
+| **High** | 0 | None detected |
+| **Medium** | 0 | None detected |
+| **Low / Info** | 9 | 8 missing-header findings and 1 technology fingerprint |
 
 ---
 
-## 🔍 Detailed List of Identified Vulnerabilities and Security Gaps
+## Detailed Findings
 
-### 1. Medium Severity Vulnerability: Development Environment Exposure
-- **`node-express-dev-env`**
-  - *Severity:* **Medium**
-  - *Status:* ✅ `NODE_ENV=production` set in the Dockerfile (Block 1; rescan pending).
-  - *Affected URL:* `http://backend:3000`
-  - *Description:* The original scan detected the Express.js application running without `NODE_ENV` explicitly set to `production`.
-  - *Risk:* Development mode may leak detailed stack traces, internal paths, and framework debug information during application errors, aiding attackers in vulnerability exploitation.
-  - *Remediation:* Set `NODE_ENV=production` in the Dockerfile and container environment. The Dockerfile now sets this environment variable.
+### 1. Missing HTTP Security Headers
 
----
-
-### 2. Missing HTTP Security Headers
-The Express API responses lack essential security headers:
+Nuclei reported these eight missing headers:
 
 - **`http-missing-security-headers:x-frame-options`**
-  - *Risk:* Allows API response framing, enabling clickjacking attacks if consumed in browsers.
 - **`http-missing-security-headers:strict-transport-security` (HSTS)**
-  - *Risk:* No enforcement of encrypted HTTPS transport.
 - **`http-missing-security-headers:referrer-policy`**
-  - *Risk:* May leak internal API endpoint references to external referrers.
 - **`http-missing-security-headers:permissions-policy`**
-  - *Risk:* Browser hardware permissions are unmanaged.
 - **`http-missing-security-headers:x-permitted-cross-domain-policies`**
-  - *Risk:* Cross-domain XML policy files are not explicitly blocked.
 - **`http-missing-security-headers:cross-origin-embedder-policy` (COEP)**
-  - *Risk:* Missing cross-origin resource embedding restrictions.
 - **`http-missing-security-headers:cross-origin-opener-policy` (COOP)**
-  - *Risk:* Allows cross-origin window opener context sharing.
 - **`http-missing-security-headers:cross-origin-resource-policy` (CORP)**
-  - *Risk:* API resources can be embedded by arbitrary external web pages.
 
----
+HSTS requires HTTPS to be useful; the API is currently served over HTTP.
 
-### 3. Technology Fingerprinting
+### 2. Technology Fingerprinting
+
 - **`tech-detect:express`**
-  - *Finding:* Express.js framework fingerprint detected via default response behavior and `X-Powered-By: Express` headers.
-  - *Remediation:* Disable powered-by header via `app.disable('x-powered-by')` or `helmet()`.
+  - **Finding:** Nuclei identifies the Express framework.
+  - **Remediation:** Disable the `X-Powered-By` header and review other response details that disclose the framework. This scan result alone does not establish an exploitable vulnerability.
+
+### 3. Development Environment Finding from the Earlier Scan
+
+- **`node-express-dev-env`**
+  - **Status:** Not reported by the 2026-10-15 scan. `NODE_ENV=production` is set in the backend Dockerfile.
+  - **Note:** The earlier finding is considered mitigated in the current image; retain this status only while the production environment setting remains in effect.
 
 ---
 
-## 🛠️ Next Steps: Granular Remediation Plan (Phase 2)
-1. ✅ **Block 1 complete:** Set `NODE_ENV=production` in the Dockerfile; rescan pending.
-2. **Next block:** Configure `helmet` middleware in `server.js` to inject standard security headers and disable `x-powered-by`.
+## Scan Notes
+
+Nuclei also probed ports `5814` and `4040`, which refused connections. These are closed ports, not findings against the backend's configured API port `3000`.
+
+## Remediation Plan
+
+1. **Block 1:** Set `NODE_ENV=production` in the Dockerfile. The development-environment finding did not recur in this scan.
+2. **Next:** Add appropriate API security headers and disable framework fingerprinting.
+3. **Later:** Configure HTTPS before enabling HSTS.
