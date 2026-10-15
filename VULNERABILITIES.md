@@ -57,6 +57,6 @@ Nuclei also probed ports `5814` and `4040`, which refused connections. These are
 
 ## Remediation Plan
 
-1. **Block 1:** Set `NODE_ENV=production` in the Dockerfile. The development-environment finding did not recur in this scan.
-2. **Next:** Add appropriate API security headers and disable framework fingerprinting.
-3. **Later:** Configure HTTPS before enabling HSTS.
+1. **Block 1 (LDAP API):** Disable public API docs, add LDAP response security headers, and hide the Uvicorn banner. This addresses 13 of the 35 findings in the 2026-10-15 baseline; LDAP HSTS remains pending HTTPS.
+2. **Block 2 (backend API):** Add the missing API headers and reduce Express fingerprinting. The earlier development-environment finding is already mitigated by `NODE_ENV=production`.
+3. **Block 3 (frontend and transport):** Review remaining frontend headers, update the NGINX image, remove the external font/SRI finding, and configure HTTPS before enabling HSTS.
